@@ -156,7 +156,7 @@ im.convert("RGB").save("assets/img/xxx/yyy.jpg", "JPEG", quality=80, optimize=Tr
 
 ### お問い合わせフォーム（SSGform）
 - サイトの中に入力欄を作り、入力された内容を SSGform（外部のフォームのサービス）へ送る。SSGform が通知のメールをオーナーへ送る。外部のスクリプトは読み込まない。
-- 送信先は `<form … action="https://ssgform.com/s/【フォームのID】">`。ID は SSGform に申し込むと届く（いまは【要確認】のまま。公開前に入れる）。
+- 送信先は `<form … action="https://ssgform.com/s/【フォームのID】">`。ID は SSGform に申し込むと届く（いまは `r63WhicDxvJy`。2026-11-24 にオーナーから。SSGform の管理画面で ID を作り直したら、ここも変える）。
 - `name` が通知メールの項目名になる（会社名・お名前・メールアドレス・今のホームページのURL・ご相談の内容・プライバシーポリシー）。項目を足す・変えるときは、見出しの文字（サイトに出る文章）をオーナーに確かめ、`<label for>` を付ける（`check_site.py` が確かめる）。
 - `<div class="form-trap">` の中の `name="wana"` は、SSGform の説明どおりの迷惑な送信を見分ける欄（人には見えない）。消さない。
 - 全ページの CSP の `form-action` は `'self' https://ssgform.com`。送信先のサービスを変えるときだけ変える（プライバシーポリシーの見直しも要る。オーナーの確認が必要）。
@@ -197,7 +197,7 @@ im.convert("RGB").save("assets/img/xxx/yyy.jpg", "JPEG", quality=80, optimize=Tr
 python3 tools/check_site.py          # リンク切れ・ページの中の行き先・共通部分・canonical/OGP・CSP・フォームの見出し・外部ファイル・画像・NFC・サイトマップ・404・画面幅の区切り など
 python3 -m http.server 8000          # http://localhost:8000/ で表示を確認（PC 幅とスマホ幅）
 ```
-- 公開前は【要確認】の印（本番URL・フォームのID・制定日など）が残っているので、`check_site.py` は不合格になる。中身を確かめるだけなら `python3 tools/check_site.py --allow-placeholders`（印は参考として表示される）。公開の前に印をすべて埋める。
+- 公開前は【要確認】の印（本番URL・制定日など）が残っているので、`check_site.py` は不合格になる。中身を確かめるだけなら `python3 tools/check_site.py --allow-placeholders`（印は参考として表示される）。公開の前に印をすべて埋める。
 - 表示確認では、スマホ幅でメニューの開閉とナビのリンク（押すとメニューが閉じて、そのセクションへ移る）、よくある質問の開閉、フォームの入力欄も触ってみる。
 - `check_site.py` が OK を出してからコミットする。OK は確かめている項目についてだけ。新しい種類の変更をしたら、確認が足りているかも見直す。
 

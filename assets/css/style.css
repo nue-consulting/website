@@ -1491,6 +1491,12 @@ html:not(.js) .slideshow__dots {
   outline-offset: 2px;
 }
 
+/* 誤りの印の枠より、フォーカスの枠を優先する（誤りのあるチェック欄にキーボードで移っても、移ったことが見えるように。JIS X 8341-3 の 2.4.7） */
+.form-check input:is(:user-invalid, [aria-invalid="true"]):focus-visible {
+  outline: 3px solid var(--c-focus);
+  outline-offset: 2px;
+}
+
 /* 入力の誤りの文（main.js が欄の下に出す。色だけに頼らず、文で知らせる） */
 .form-error {
   margin: 6px 0 0;

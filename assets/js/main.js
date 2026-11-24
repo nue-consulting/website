@@ -339,6 +339,12 @@
     });
     if (!fields.length) return;
     form.noValidate = true;
+    // 入力の途中で誤りの文が替わったときに読み上げるための、見えない知らせの場所（JIS X 8341-3 の 4.1.3）
+    var live = document.createElement("p");
+    live.className = "visually-hidden";
+    live.setAttribute("role", "status");
+    form.appendChild(live);
+    var errId = function (el) { return (el.id || el.name) + "-error"; };
     var describe = function (el, id, on) {
       var ids = (el.getAttribute("aria-describedby") || "").split(/\s+/).filter(function (x) { return x && x !== id; });
       if (on) ids.push(id);
@@ -352,7 +358,7 @@
       return el.getAttribute("data-error-required") || el.validationMessage;
     };
     var show = function (el, msg) {
-      var id = (el.id || el.name) + "-error";
+      var id = errId(el);
       var box = document.getElementById(id);
       if (!msg) {
         if (box) box.parentNode.removeChild(box);
@@ -374,6 +380,7 @@
     };
     form.addEventListener("submit", function (e) {
       var first = null;
+      live.textContent = "";
       fields.forEach(function (el) {
         var msg = messageFor(el);
         show(el, msg);
@@ -384,9 +391,16 @@
         first.focus();
       }
     });
-    // 一度知らせた欄は、直したらすぐに文を消す（まだ違えば文を入れ替える）
+    // 一度知らせた欄は、直したらすぐに文を消す（まだ違えば文を入れ替え、替わった文を読み上げる）
     fields.forEach(function (el) {
-      var update = function () { if (el.getAttribute("aria-invalid") === "true") show(el, messageFor(el)); };
+      var update = function () {
+        if (el.getAttribute("aria-invalid") !== "true") return;
+        var box = document.getElementById(errId(el));
+        var before = box ? box.textContent : "";
+        var msg = messageFor(el);
+        show(el, msg);
+        if (msg && msg !== before) live.textContent = msg;
+      };
       el.addEventListener("input", update);
       el.addEventListener("change", update);
     });

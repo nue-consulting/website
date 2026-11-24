@@ -177,7 +177,7 @@ im.convert("RGB").save("assets/img/xxx/yyy.jpg", "JPEG", quality=80, optimize=Tr
 - Google 翻訳のウェブページ翻訳（translate.goog）を通すと、このサイトは翻訳されず、見た目も崩れる（ブラウザ内蔵の翻訳は使える）。独自ドメインに切り替えた後は、全ページの CSP の `script-src`・`style-src`・`img-src` に本番の読み込み元を足すと、崩れずに表示される（`check_site.py` はこの追加だけは認める）。
 
 ### アクセス解析（計測の画像）
-サービスは GoatCounter（2026-11 にオーナーが決定）。計測の画像の URL は `https://【要確認：コード】.goatcounter.com/count?p=そのページの場所`（例 トップ `p=/`、プライバシーポリシー `p=/privacy/`、404 は `p=/404`）。コードは GoatCounter に申し込むと決まる。Cookie を使わず、画像を1つ読み込ませて数える型だけを使う（外部のスクリプトは読み込まない。この方式では、リンク元と画面の大きさは記録されない）。
+サービスは GoatCounter（2026-11 にオーナーが決定）。計測の画像の URL は `https://yojiumaji.goatcounter.com/count?p=そのページの場所`（トップ `p=/`、プライバシーポリシー `p=/privacy/`、お礼のページ `p=/thanks/`、404 は `p=/404`）。`yojiumaji` は GoatCounter のアカウント名（2026-11-24 にオーナーから。下の 1〜3 は入れてある）。ページを足したら、そのページにも計測の画像を1つ置く。Cookie を使わず、画像を1つ読み込ませて数える型だけを使う（外部のスクリプトは読み込まない。この方式では、リンク元と画面の大きさは記録されない）。
 1. `tools/site_config.json` の `analytics_pixel` に、計測サービスの読み込み元（`https://ホスト名`）を書く。
 2. 全ページの CSP の `img-src` に同じ読み込み元を足す。
 3. 各ページのフッター（`</footer>`）のすぐ後ろに、計測の画像を1つ置く：`<img class="visually-hidden" src="【計測の URL（そのページの場所を含む）】" alt="" width="1" height="1">`（`loading="lazy"` は付けない）。

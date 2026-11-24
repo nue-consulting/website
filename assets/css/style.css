@@ -1,0 +1,2870 @@
+/* =========================================================
+   サイト共通スタイル（ひな形）
+   外部フォント・外部ライブラリは使わない。色・余白は「1. 変数」にまとめる。
+   顧客ごとに変えるのは、主に「1. 変数」の色・ロゴの大きさ・写真（url）。
+
+   目次
+   1. 変数（色・文字・寸法・アイコン）
+   2. 基本（文字・リンク・フォーカス・本文へ移動）
+   3. ヘッダー（ロゴ）
+   4. グローバルナビ（PC：ドロップダウン／960px未満：全面メニュー）
+   5. ページ見出し帯・パンくず・タブ
+   6. 本文の枠と汎用部品（見出し・写真・横並び・会社情報の表・地図・表・拡大できる画像・ボタン）
+   6b. 内容を伝える部品（全幅の帯・強み・カード・流れ・よくある質問・お問い合わせへの誘導・写真の一覧）
+   7. ホーム（ヒーロー・スライドショー・主なページへのリンク）
+   8. お問い合わせ・プライバシーポリシー・サイトマップ・404
+   9. お問い合わせ帯（全ページ共通）
+   10. フッター
+   11. ライトボックス（画像の拡大表示）
+   12. 動きを減らす設定
+   13. 強制カラー（Windows のコントラスト テーマ）
+   14. このサイトの見た目（夜明け：上は黒、下に行くほど白）と、このサイトだけの部品（文字のロゴ・困りごとの一覧・箇条書き・流れの3列・写真の無いヒーロー）
+
+   画面幅の区切り（各部品のすぐ後ろに書く）
+   - 960px：これ未満はメニューボタン（main.js の NAV_BREAKPOINT と必ず同じ値にする）
+   - 768px：これ未満はスマートフォン（1列）
+   - 「これ未満」は (max-width: 959.98px) のように .98 で書く。拡大率 125% などで画面幅が
+     959.5px のような小数になっても、min-width: 960px とどちらか一方に必ず当たるようにするため
+     （tools/check_site.py が確かめる）
+   ========================================================= */
+
+/* ---------- 1. 変数（色・文字・寸法・アイコン） ---------- */
+
+:root {
+  /* 色：会社の色（ロゴの色などに合わせて変える。白地の文字・白抜き文字とも WCAG AA 以上を保つ） */
+  --c-primary: #3d1f6e;        /* 紫：リンク・番号・印 */
+  --c-primary-hover: #29144d;  /* ホバー */
+  --c-primary-tint: #efeaf8;   /* 薄い紫の面 */
+  --c-accent: #7a2456;         /* 臙脂：グラデーションの終わり */
+  --c-on-primary: #ffffff;     /* 会社の色の面の上の文字 */
+
+  /* 色：文字と面 */
+  --c-text: #16141f;           /* 本文（墨） */
+  --c-text-muted: #55526a;     /* 補足 */
+  --c-bg: #ffffff;             /* 背景 */
+  --c-bg-alt: #f4f3f8;         /* 薄い面（ひな形の部品が使う。このサイトの帯は「夜明け」の色） */
+  --c-line: #d9d6e3;           /* 罫線 */
+  --c-hero-bg: #f4f3f8;        /* ページ見出し帯（プライバシーポリシー・404） */
+  --c-hero-surface: #0b0a12;   /* 夜の面（グラデーションが出ないときの色） */
+  --c-on-hero: #ffffff;        /* 夜の面の上の文字 */
+  --c-on-hero-muted: #d4cfe4;  /* 夜の面の上の補足 */
+  --c-ink: #0b0a12;            /* 墨（線・番号の丸） */
+
+  /* 夜明け：ページの上から下へ、黒から白へ（帯ごとに続きの色を受け持つ。14. を見る）
+     1〜4番目の帯は白い文字、5〜8番目は黒い文字。境目の色は、どちらの文字もコントラスト AA を満たす値 */
+  --dawn-0: #0b0a12;
+  --dawn-1: #1f1c2d;
+  --dawn-2: #322e48;
+  --dawn-3: #464164;
+  --dawn-4: #5a537f;           /* ここまで白い文字 */
+  --dawn-5: #827d9e;           /* ここから黒い文字 */
+  --dawn-6: #a19eb6;
+  --dawn-7: #c0bece;
+  --dawn-8: #e0dee7;
+  --dawn-9: #ffffff;
+  --c-on-dark: #ece9f5;        /* 暗い帯・ヘッダーの文字 */
+  --c-dark-line: #4f4a68;      /* 暗い帯・ヘッダーの細い線 */
+  --c-violet-light: #c9a7ff;   /* 暗い帯の印・リンク */
+  --c-line-on-light: rgb(var(--c-shadow-rgb) / .16);  /* 明るい帯の細い線（地が灰色がかっても見える） */
+  --c-line-on-dark: rgb(var(--c-white-rgb) / .2);     /* 暗い帯の細い線（どの段の地でも見える） */
+  --c-pink-light: #ff9cc8;     /* 夜明けの光（桃色）：地平線・絵・暗い帯の印 */
+  --c-panel: var(--c-bg);      /* カードの面（帯の中では、地に白を重ねた色に切り替える。14. を見る） */
+  --c-ring: transparent;       /* 番号の丸のふち（暗い帯では、丸が地に溶けないよう白いふちを付ける） */
+
+  /* 奥行き（影と光）：カード・ボタン・番号の丸を、少し浮かせて見せる。動かさない。
+     影は夜の色を重ね、上の端に細い光を入れる。暗い帯・明るい帯で切り替える（14. を見る） */
+  --shadow-card: 0 1px 2px rgb(var(--c-shadow-rgb) / .08), 0 16px 32px -12px rgb(var(--c-shadow-rgb) / .28);
+  --shadow-card-near: 0 1px 2px rgb(var(--c-shadow-rgb) / .08), 0 6px 14px -8px rgb(var(--c-shadow-rgb) / .3); /* 詰めて並ぶカード（よくある質問） */
+  --edge-light: inset 0 1px 0 rgb(var(--c-white-rgb) / .75);   /* カードの上の端の光 */
+  --shadow-bead: 0 6px 12px -4px rgb(var(--c-shadow-rgb) / .55), inset 0 1px 0 rgb(var(--c-white-rgb) / .38); /* 丸い印（番号・チェック） */
+  --shadow-float: 0 2px 4px rgb(var(--c-shadow-rgb) / .06), 0 28px 60px -18px rgb(var(--c-shadow-rgb) / .38); /* いちばん手前に浮く白いカード（お問い合わせフォーム） */
+  --c-pink-light-rgb: 255 156 200;  /* 夜明けの光（桃色）を、透かして使うときの数値 */
+  --grad-icon: var(--grad-accent);  /* カードの絵の色（暗い帯では明るいグラデーションに切り替える） */
+
+  /* グラデーション（鵺：夜の墨から藍・紫、臙脂へ） */
+  --grad-night: radial-gradient(circle at 82% 18%, rgb(255 255 255 / .09), transparent 42%), linear-gradient(135deg, #0b0a12 0%, #1c1645 46%, #44206b 76%, #7a2456 100%);
+  --grad-accent: linear-gradient(120deg, var(--c-primary) 0%, var(--c-accent) 100%);
+  --grad-accent-hover: linear-gradient(120deg, #29144d 0%, #5e1a42 100%);
+  --grad-accent-bright: linear-gradient(120deg, #6a35c9 0%, #b0306f 100%);     /* 暗い帯の線・番号の丸 */
+  --grad-accent-text-light: linear-gradient(120deg, #c9a7ff 0%, #ff9cc8 100%); /* 暗い帯のグラデーションの文字（特長の番号）・カードの絵 */
+  /* 夜明けの光（動かさない。トップの下からの光と、暗い帯と明るい帯の境目の「地平線」） */
+  --grad-dawn-glow: radial-gradient(ellipse 62% 78% at 84% 118%, rgb(255 156 200 / .3), transparent 70%);
+  --grad-horizon: linear-gradient(90deg, transparent 0%, #c9a7ff 20%, #ff9cc8 50%, #c9a7ff 80%, transparent 100%);
+  --grad-horizon-glow: radial-gradient(ellipse 72% 100% at 50% 0%, rgb(255 156 200 / .4), transparent 72%);
+
+  /* 色：フッター（夜明けの終わりの白）とその上の文字 */
+  --c-footer-bg: var(--dawn-9);
+  --c-on-footer: var(--c-text);
+  --c-on-footer-muted: var(--c-text-muted);
+
+  /* 色：影・幕に使う数値（rgb(var(--c-shadow-rgb) / .1) の形で使う） */
+  --c-shadow-rgb: 11 10 18;
+  --c-white-rgb: 255 255 255;
+  --c-overlay: rgb(var(--c-shadow-rgb) / .55);   /* ホームのヒーローの写真の上の幕 */
+  --c-backdrop: rgb(var(--c-shadow-rgb) / .9);   /* 拡大表示の背景 */
+
+  /* 入力欄（ここで決めた値のまま受け継ぐので、帯の中で --c-bg・--c-text を変えても白い欄・濃い文字のまま） */
+  --c-field-bg: var(--c-bg);
+  --c-field-text: var(--c-text);
+  --c-field-line: var(--c-text-muted);
+  --c-error: #b3261e;          /* 入力の誤りの印（白地に 6.5:1） */
+
+  /* フォーカス枠（濃い面・会社の色の面では --c-focus-on-dark に切り替える） */
+  --c-focus: var(--c-primary);
+  --c-focus-on-dark: #ffffff;
+
+  /* 文字（端末の標準フォント） */
+  --font-base: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic Medium", "Yu Gothic", YuGothic, Meiryo, sans-serif;
+
+  /* 寸法 */
+  --container: 1120px;                       /* 中身の最大幅 */
+  --gutter: clamp(16px, 4vw, 40px);          /* 画面の左右の余白 */
+  --header-h: 72px;                          /* ヘッダーの高さ（下の @media で変わる） */
+  --logo-h: 44px;                            /* ロゴの高さ */
+  --section-y: clamp(48px, 7vw, 96px);       /* 本文の上下の余白 */
+  --radius: 0px;                             /* 角の丸み（角は立てる） */
+  --tap: 44px;                               /* 押せる部分の最小の大きさ */
+
+  /* アイコン（装飾。mask で文字色に塗る） */
+  --icon-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  --icon-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4'%3E%3Cpath d='M9 5l7 7-7 7'/%3E%3C/svg%3E");
+  --icon-zoom: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4'%3E%3Ccircle cx='10' cy='10' r='6.5'/%3E%3Cpath d='M15 15l6 6M10 7v6M7 10h6'/%3E%3C/svg%3E");
+  --icon-external: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4'%3E%3Cpath d='M9 4H4v16h16v-5M13 4h7v7M20 4l-9 9'/%3E%3C/svg%3E");
+  --icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+  --icon-plus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E");
+  --icon-close: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4'%3E%3Cpath d='M5 5l14 14M19 5L5 19'/%3E%3C/svg%3E");
+  /* 「できること」のカードの絵（このサイト用に描いたもの）：作り変える・新しく作る・言葉で頼む */
+  --icon-renew: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19.5 12a7.5 7.5 0 1 1-2.2-5.3M18 2.5v4.7h-4.7'/%3E%3C/svg%3E");
+  --icon-newpage: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 4h16v16H4zM12 8.5v7M8.5 12h7'/%3E%3C/svg%3E");
+  --icon-chat: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4h18v12H11l-5 4.5V16H3zM7.5 8.5h9M7.5 12h5.5'/%3E%3C/svg%3E");
+}
+
+@media (max-width: 959.98px) {
+  :root {
+    --header-h: 60px;
+    --logo-h: 36px;
+  }
+}
+
+/* ---------- 2. 基本（文字・リンク・フォーカス・本文へ移動） ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* 固定ヘッダーの下に隠れないように：ページの中の行き先（id のある所）と、ヘッダーの外の操作できる部品に、上の余白を取る。
+   ページ全体（html の scroll-padding-top）には付けない。付けると、ヘッダーの中のボタンまで「隠れている」扱いになり、
+   キーボードでヘッダーへ移るたびに、ページが勝手に上へ戻るため */
+[id],
+:where(main, aside, footer) :is(a[href], button, input, select, textarea, summary, [tabindex]) {
+  scroll-margin-top: calc(var(--header-h) + 16px);
+}
+
+body {
+  margin: 0;
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-family: var(--font-base);
+  font-size: 16px;
+  line-height: 1.85;
+  overflow-wrap: break-word; /* 収まらない長い英数字だけを折り返す */
+}
+
+@media (max-width: 767.98px) {
+  body {
+    font-size: 15px;
+  }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  vertical-align: bottom;
+}
+
+a {
+  color: var(--c-primary);
+  text-underline-offset: .2em;
+}
+
+a:hover {
+  color: var(--c-primary-hover);
+}
+
+:focus-visible {
+  outline: 3px solid var(--c-focus);
+  outline-offset: 2px;
+}
+
+/* 別のサイトへ別タブで開くリンクの印 */
+.page-body a[target="_blank"]:not(.button)::after {
+  content: "";
+  display: inline-block;
+  width: .85em;
+  height: .85em;
+  margin-left: .25em;
+  vertical-align: -.05em;
+  background: currentColor;
+  -webkit-mask: var(--icon-external) center / contain no-repeat;
+  mask: var(--icon-external) center / contain no-repeat;
+}
+
+/* 言葉の途中で改行させないまとまり */
+.nw {
+  display: inline-block;
+}
+
+/* 画面には出さず、読み上げだけに伝える文字 */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* 本文へ移動（キーボードで最初に Tab を押したときだけ出る） */
+.skip-link {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 200;
+  padding: 8px 16px;
+  background: var(--c-bg);
+  color: var(--c-primary);
+  font-weight: 700;
+  border-radius: var(--radius);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+/* ---------- 3. ヘッダー（ロゴ） ---------- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--c-bg);
+  border-bottom: 1px solid var(--c-line);
+  transition: box-shadow .2s;
+}
+
+.site-header.is-scrolled {
+  box-shadow: 0 2px 12px rgb(var(--c-shadow-rgb) / .08);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: calc(var(--container) + var(--gutter) * 2);
+  min-height: var(--header-h);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.site-logo {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  flex-shrink: 0;
+}
+
+.site-logo img {
+  width: auto;
+  height: var(--logo-h);
+}
+
+/* ---------- 4. グローバルナビ（PC：ドロップダウン／960px未満：全面メニュー） ---------- */
+
+.global-nav__list,
+.global-nav__sub {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.global-nav__item > a,
+.global-nav__sub a {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap);
+  color: var(--c-text);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.global-nav__item > a:hover,
+.global-nav__sub a:hover {
+  color: var(--c-primary);
+}
+
+.global-nav__expand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  min-height: var(--tap);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--c-text);
+  cursor: pointer;
+}
+
+.global-nav__expand::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  background: currentColor;
+  -webkit-mask: var(--icon-chevron) center / contain no-repeat;
+  mask: var(--icon-chevron) center / contain no-repeat;
+  transition: transform .2s;
+}
+
+.global-nav__item.is-open > .global-nav__expand::before {
+  transform: rotate(180deg);
+}
+
+/* 「お問い合わせ」の項目はボタンの形 */
+.global-nav__item--cta > a {
+  justify-content: center;
+  padding: 0 20px;
+  border-radius: var(--radius);
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+}
+
+.global-nav__item--cta > a:hover {
+  background: var(--c-primary-hover);
+  color: var(--c-on-primary);
+}
+
+.nav-toggle {
+  display: none;
+}
+
+@media (min-width: 960px) {
+  .global-nav__list {
+    display: flex;
+    align-items: center;
+    gap: 4px 20px;
+  }
+
+  .global-nav__item {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .global-nav__item.has-sub > a {
+    padding-right: 0;
+  }
+
+  /* 現在のページ（とその親）の下に線 */
+  .global-nav__item:not(.global-nav__item--cta) > a {
+    position: relative;
+  }
+
+  .global-nav__item.is-current:not(.global-nav__item--cta) > a::after,
+  .global-nav__item.is-parent > a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 6px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--c-primary);
+  }
+
+  .global-nav__item--cta.is-current > a {
+    background: var(--c-primary-hover);
+  }
+
+  /* ドロップダウン：マウスを乗せる・∨ ボタンで開く */
+  .global-nav__sub {
+    position: absolute;
+    top: 100%;
+    left: -16px;
+    z-index: 10;
+    min-width: 220px;
+    padding: 8px 0;
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius);
+    background: var(--c-bg);
+    box-shadow: 0 8px 24px rgb(var(--c-shadow-rgb) / .12);
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity .15s, transform .15s, visibility .15s;
+  }
+
+  .global-nav__item.has-sub:hover:not(.is-dismissed) > .global-nav__sub,
+  .global-nav__item.is-open > .global-nav__sub {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+  }
+
+  .global-nav__sub a {
+    padding: 4px 20px;
+    font-weight: 400;
+  }
+
+  .global-nav__sub .is-current > a {
+    color: var(--c-primary);
+    font-weight: 700;
+  }
+}
+
+@media (max-width: 959.98px) {
+  .js .nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: var(--tap);
+    min-height: var(--tap);
+    padding: 0 8px;
+    border: 0;
+    background: none;
+    color: var(--c-text);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* 三本線（開くと ×） */
+  .nav-toggle__icon {
+    position: relative;
+    width: 22px;
+    height: 2px;
+    background: currentColor;
+    transition: background-color .2s;
+  }
+
+  .nav-toggle__icon::before,
+  .nav-toggle__icon::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    transition: transform .2s;
+  }
+
+  .nav-toggle__icon::before {
+    transform: translateY(-7px);
+  }
+
+  .nav-toggle__icon::after {
+    transform: translateY(7px);
+  }
+
+  .nav-open .nav-toggle__icon {
+    background-color: transparent;
+  }
+
+  .nav-open .nav-toggle__icon::before {
+    transform: rotate(45deg);
+  }
+
+  .nav-open .nav-toggle__icon::after {
+    transform: rotate(-45deg);
+  }
+
+  /* JS が動かないときは、メニューをヘッダーの下にそのまま並べる */
+  .site-header__inner {
+    flex-wrap: wrap;
+  }
+
+  .global-nav {
+    flex-basis: 100%;
+  }
+
+  .js .global-nav {
+    flex-basis: auto;
+  }
+
+  .js .global-nav__panel {
+    position: fixed;
+    top: var(--header-h);
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 8px var(--gutter) 40px;
+    background: var(--c-bg);
+    border-top: 1px solid var(--c-line);
+    visibility: hidden;
+  }
+
+  .js .nav-open .global-nav__panel {
+    visibility: visible;
+  }
+
+  .nav-open {
+    overflow: hidden;
+  }
+
+  .global-nav__item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  .global-nav__item > a {
+    flex: 1;
+    padding: 6px 0;
+  }
+
+  .global-nav__item.is-current > a,
+  .global-nav__item.is-parent > a,
+  .global-nav__sub .is-current > a {
+    color: var(--c-primary);
+  }
+
+  .global-nav__expand {
+    width: var(--tap);
+  }
+
+  .global-nav__sub {
+    flex-basis: 100%;
+    padding: 0 0 8px 16px;
+  }
+
+  .js .global-nav__item.has-sub:not(.is-open) > .global-nav__sub {
+    display: none;
+  }
+
+  .global-nav__sub a {
+    font-weight: 400;
+  }
+
+  .global-nav__item--cta {
+    margin-top: 24px;
+    border-bottom: 0;
+  }
+
+  .global-nav__item--cta > a,
+  .global-nav__item--cta.is-current > a {
+    color: var(--c-on-primary);
+  }
+}
+
+/* ---------- 5. ページ見出し帯・パンくず・タブ ---------- */
+
+.page-hero {
+  background: var(--c-hero-bg);
+}
+
+.page-hero__inner {
+  max-width: calc(var(--container) + var(--gutter) * 2);
+  margin: 0 auto;
+  padding: clamp(28px, 5vw, 56px) var(--gutter) clamp(24px, 4vw, 40px);
+}
+
+.page-title {
+  margin: 0;
+  font-size: clamp(1.6rem, 3.4vw, 2.3rem);
+  line-height: 1.4;
+  letter-spacing: .04em;
+}
+
+/* 見出しの下の短い線 */
+.page-title::after {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 3px;
+  margin-top: 14px;
+  border-radius: 2px;
+  background: var(--c-primary);
+}
+
+.breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+}
+
+.breadcrumb li + li::before {
+  content: "›";
+  margin: 0 .6em;
+  color: var(--c-text-muted);
+}
+
+.breadcrumb a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  color: var(--c-text-muted);
+}
+
+.breadcrumb a[aria-current="page"] {
+  color: var(--c-text);
+  text-decoration: none;
+}
+
+.subnav--tabs ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.subnav--tabs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 0 18px;
+  border: 1px solid var(--c-line);
+  border-radius: 999px;
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.subnav--tabs a:hover {
+  border-color: var(--c-primary);
+  background: var(--c-primary-tint);
+  color: var(--c-primary);
+}
+
+.subnav--tabs .is-current a {
+  border-color: var(--c-primary);
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+}
+
+/* ---------- 6. 本文の枠と汎用部品 ---------- */
+
+.page-body {
+  max-width: calc(var(--container) + var(--gutter) * 2);
+  margin: 0 auto;
+  padding: var(--section-y) var(--gutter);
+}
+
+.page-body > :first-child,
+.section > :first-child {
+  margin-top: 0;
+}
+
+.section + .section {
+  margin-top: var(--section-y);
+}
+
+.page-body h2 {
+  margin: 2.2em 0 .9em;
+  padding-left: .7em;
+  border-left: 4px solid var(--c-primary);
+  font-size: clamp(1.25rem, 2.4vw, 1.6rem);
+  line-height: 1.5;
+}
+
+.page-body h3 {
+  margin: 1.8em 0 .6em;
+  font-size: 1.15rem;
+  line-height: 1.6;
+}
+
+.page-body p {
+  margin: 0 0 1.1em;
+}
+
+.lead {
+  font-size: 1.1em;
+}
+
+/* 写真（説明文つき） */
+.photo {
+  margin: 0;
+}
+
+.photo img {
+  display: block;
+  width: 100%;
+  border-radius: var(--radius);
+}
+
+.photo figcaption {
+  margin-top: 8px;
+  color: var(--c-text-muted);
+  font-size: 14px;
+}
+
+/* 写真と文章の横並び（768px未満は縦並び） */
+.media {
+  display: grid;
+  gap: 24px 40px;
+  align-items: start;
+}
+
+.media + .media {
+  margin-top: 40px;
+}
+
+.media > div > :first-child,
+.two-col > div > :first-child {
+  margin-top: 0;
+}
+
+@media (min-width: 768px) {
+  .media {
+    grid-template-columns: 2fr 3fr;
+  }
+
+  /* 写真を右に置く（幅の割合はそのまま） */
+  .media--reverse {
+    grid-template-columns: 3fr 2fr;
+  }
+
+  .media--reverse .photo {
+    order: 2;
+  }
+}
+
+/* 2段組み（960px未満は1段） */
+.two-col {
+  display: grid;
+  gap: 40px;
+}
+
+@media (min-width: 960px) {
+  .two-col {
+    grid-template-columns: 3fr 2fr;
+    align-items: start;
+  }
+}
+
+/* 会社情報などの「項目：内容」の表 */
+.spec {
+  margin: 0;
+  border-top: 1px solid var(--c-line);
+}
+
+.spec__row {
+  display: grid;
+  grid-template-columns: 9em 1fr;
+  gap: 4px 24px;
+  padding: 16px 4px;
+  border-bottom: 1px solid var(--c-line);
+}
+
+.spec dt {
+  font-weight: 700;
+}
+
+.spec dd {
+  margin: 0;
+}
+
+@media (max-width: 767.98px) {
+  .spec__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 地図（Google マップの埋め込み） */
+.map-frame {
+  overflow: hidden;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  background: var(--c-bg-alt);
+  aspect-ratio: 4 / 3;
+}
+
+.map-frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* 横に長い表（狭い画面では表だけ横にスクロール） */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.data-table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.data-table caption {
+  margin-bottom: 8px;
+  color: var(--c-text-muted);
+  font-size: 14px;
+  text-align: left;
+}
+
+.data-table th,
+.data-table td {
+  padding: 12px 14px;
+  border: 1px solid var(--c-line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.data-table thead th {
+  background: var(--c-bg-alt);
+  white-space: nowrap;
+}
+
+/* 拡大できる画像（main.js のライトボックス。data-lightbox="グループ名"） */
+.zoomable {
+  position: relative;
+  display: block;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.zoomable::after {
+  content: "";
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--c-primary);
+}
+
+.zoomable::before {
+  content: "";
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1;
+  width: 20px;
+  height: 20px;
+  background: var(--c-on-primary);
+  -webkit-mask: var(--icon-zoom) center / contain no-repeat;
+  mask: var(--icon-zoom) center / contain no-repeat;
+}
+
+.zoomable:hover img {
+  opacity: .9;
+}
+
+/* 書類・スキャン画像を並べる（拡大できる） */
+.doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 140px), 1fr));
+  gap: clamp(12px, 2vw, 20px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doc-grid .zoomable {
+  border: 1px solid var(--c-line);
+  background: var(--c-bg);
+}
+
+/* ボタン */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--tap);
+  padding: 8px 28px;
+  border: 2px solid var(--c-primary);
+  border-radius: var(--radius);
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+  font-weight: 700;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.button:hover {
+  border-color: var(--c-primary-hover);
+  background: var(--c-primary-hover);
+  color: var(--c-on-primary);
+}
+
+.button::after {
+  content: "";
+  width: 1em;
+  height: 1em;
+  background: currentColor;
+  -webkit-mask: var(--icon-arrow) center / contain no-repeat;
+  mask: var(--icon-arrow) center / contain no-repeat;
+}
+
+/* 会社の色の面の上のボタン（白地） */
+.button--inverse {
+  border-color: var(--c-on-primary);
+  background: var(--c-on-primary);
+  color: var(--c-primary);
+}
+
+.button--inverse:hover {
+  border-color: var(--c-on-primary);
+  background: var(--c-primary-tint);
+  color: var(--c-primary-hover);
+}
+
+/* ---------- 6b. 内容を伝える部品（全幅の帯・強み・カード・流れ・よくある質問・お問い合わせへの誘導・写真の一覧） ----------
+   1ページ型は <div class="page-body page-body--bands"> の中に <section class="band" id="…"> を並べる。
+   複数ページ型でも、本文の中で同じ部品を使える。数字は CSS の counter で付ける（HTML に文字を足さない） */
+
+.page-body--bands {
+  max-width: none;
+  padding: 0;
+}
+
+/* 全幅の帯（背景は交互に変えてよい） */
+.band {
+  padding: var(--section-y) 0;
+}
+
+.band--alt {
+  background: var(--c-bg-alt);
+}
+
+.band__inner {
+  max-width: calc(var(--container) + var(--gutter) * 2);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.band__inner > :first-child {
+  margin-top: 0;
+}
+
+/* 見出しの下の短い説明 */
+.section-lead {
+  max-width: 44em;
+  margin-bottom: 32px;
+  color: var(--c-text-muted);
+  font-size: 1.05em;
+}
+
+/* 強み（番号つきの3〜4つ） */
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: feature;
+}
+
+.feature {
+  padding: 28px 24px;
+  border-top: 3px solid var(--c-primary);
+  border-radius: 0 0 var(--radius) var(--radius);
+  background: var(--c-bg);
+  box-shadow: 0 2px 12px rgb(var(--c-shadow-rgb) / .06);
+}
+
+.feature::before {
+  counter-increment: feature;
+  content: counter(feature, decimal-leading-zero);
+  display: block;
+  margin-bottom: 8px;
+  color: var(--c-primary);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.page-body .feature__title,
+.page-body .card__title,
+.page-body .step__title {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+
+.feature p:last-child,
+.card p:last-child,
+.step p:last-child {
+  margin-bottom: 0;
+}
+
+/* カード（サービス・商品など。写真は 16:10 で切り取る） */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  background: var(--c-bg);
+}
+
+.card > img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+
+.card__body {
+  flex: 1;
+  padding: 20px 22px 24px;
+}
+
+/* ご利用の流れ（番号つきの手順） */
+.steps {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.step {
+  position: relative;
+  padding: 20px 24px 20px 76px;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  background: var(--c-bg);
+}
+
+.step::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+  font-weight: 700;
+}
+
+@media (min-width: 960px) {
+  .steps--row {
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+  }
+
+  .steps--row .step {
+    padding: 72px 20px 24px;
+  }
+}
+
+/* よくある質問（<details> で開閉。JS なしで動く） */
+.faq {
+  border-top: 1px solid var(--c-line);
+}
+
+.faq__item {
+  border-bottom: 1px solid var(--c-line);
+}
+
+.faq__q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: var(--tap);
+  padding: 16px 4px;
+  font-weight: 700;
+  list-style: none;
+  cursor: pointer;
+}
+
+.faq__q::-webkit-details-marker {
+  display: none;
+}
+
+.faq__q::after {
+  content: "";
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  background: var(--c-primary);
+  -webkit-mask: var(--icon-plus) center / contain no-repeat;
+  mask: var(--icon-plus) center / contain no-repeat;
+  transition: transform .2s;
+}
+
+.faq__item[open] > .faq__q::after {
+  transform: rotate(45deg);
+}
+
+.faq__a {
+  padding: 0 4px 16px;
+}
+
+/* お問い合わせへの誘導（本文の途中・最後に置く枠） */
+.cta-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+  margin: 40px 0 0;
+  padding: 28px 32px;
+  border: 2px solid var(--c-primary);
+  border-radius: var(--radius);
+  background: var(--c-primary-tint);
+}
+
+.page-body .cta-box p {
+  margin: 0;
+}
+
+.cta-box__text {
+  font-size: 1.1em;
+  font-weight: 700;
+}
+
+.cta-box__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+}
+
+.cta-box__tel {
+  font-size: 1.3em;
+  font-weight: 700;
+}
+
+/* 写真の一覧（実績・施工例など。押すと拡大） */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr));
+  gap: clamp(12px, 2vw, 20px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gallery img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.page-body .gallery__caption {
+  margin: 8px 0 0;
+  font-size: 14px;
+}
+
+/* ホームのヒーローのボタン（1ページ型など） */
+.home-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  margin-top: 28px;
+}
+
+.home-hero__tel {
+  margin: 0;
+  font-size: 1.3em;
+  font-weight: 700;
+}
+
+/* ---------- 7. ホーム（ヒーロー・スライドショー・主なページへのリンク） ---------- */
+
+.home-hero {
+  --c-focus: var(--c-focus-on-dark);
+  display: flex;
+  align-items: center;
+  min-height: clamp(320px, 48vw, 560px);
+  /* 色は「14. このサイトだけの部品」の .home-hero（写真を使わないため） */
+}
+
+.home-hero__inner {
+  width: 100%;
+  max-width: calc(var(--container) + var(--gutter) * 2);
+  margin: 0 auto;
+  padding: var(--section-y) var(--gutter);
+}
+
+.home-hero__title {
+  margin: 0 0 20px;
+  font-size: clamp(1.75rem, 4.6vw, 3.2rem);
+  line-height: 1.4;
+  letter-spacing: .04em;
+}
+
+.home-hero__lead {
+  max-width: 40em;
+  margin: 0;
+  font-size: clamp(1rem, 1.6vw, 1.125rem);
+}
+
+/* スライドショー（main.js。自動で切り替わるのは data-autoplay のミリ秒ごと。動きを減らす設定では止める） */
+.slideshow {
+  position: relative;
+}
+
+.slideshow__viewport {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--c-bg-alt);
+  aspect-ratio: 16 / 10;
+}
+
+.slideshow__slide {
+  position: absolute;
+  inset: 0;
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .6s, visibility .6s;
+}
+
+.slideshow__slide.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.slideshow__slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* JS が動かないときは、1枚目だけを出す */
+.slideshow__prev,
+.slideshow__next {
+  position: absolute;
+  top: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap);
+  height: var(--tap);
+  margin-top: -40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(var(--c-white-rgb) / .92);
+  color: var(--c-text);
+  box-shadow: 0 2px 8px rgb(var(--c-shadow-rgb) / .2);
+  cursor: pointer;
+}
+
+.slideshow__prev {
+  left: 12px;
+}
+
+.slideshow__next {
+  right: 12px;
+}
+
+.slideshow__prev::before,
+.slideshow__next::before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background: currentColor;
+  -webkit-mask: var(--icon-arrow) center / contain no-repeat;
+  mask: var(--icon-arrow) center / contain no-repeat;
+}
+
+.slideshow__prev::before {
+  transform: scaleX(-1);
+}
+
+.slideshow__dots {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.slideshow__dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap);
+  height: var(--tap);
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.slideshow__dot::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--c-primary);
+  border-radius: 50%;
+}
+
+.slideshow__dot.is-active::before {
+  background: var(--c-primary);
+}
+
+html:not(.js) .slideshow__prev,
+html:not(.js) .slideshow__next,
+html:not(.js) .slideshow__dots {
+  display: none;
+}
+
+/* 主なページへのリンク（写真つきのカード） */
+.home-links ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 24px;
+  margin: var(--section-y) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-links a {
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  color: var(--c-text);
+  text-decoration: none;
+  transition: box-shadow .2s;
+}
+
+.home-links a:hover {
+  box-shadow: 0 6px 20px rgb(var(--c-shadow-rgb) / .12);
+}
+
+.home-links img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+
+.home-links__label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 14px 18px;
+  font-weight: 700;
+}
+
+.home-links__label::after {
+  content: "";
+  width: 1em;
+  height: 1em;
+  background: var(--c-primary);
+  -webkit-mask: var(--icon-arrow) center / contain no-repeat;
+  mask: var(--icon-arrow) center / contain no-repeat;
+}
+
+/* ---------- 8. お問い合わせ・プライバシーポリシー・サイトマップ・404 ---------- */
+
+.contact-info {
+  margin: 32px 0;
+  padding: 24px;
+  border-radius: var(--radius);
+  background: var(--c-bg-alt);
+}
+
+.contact-info p {
+  margin: 0;
+}
+
+.contact-info__name {
+  font-weight: 700;
+}
+
+/* フォームの埋め込み枠（中が空〈コメントだけ〉の間は出さない） */
+.form-embed:empty {
+  display: none;
+}
+
+.form-embed iframe {
+  display: block;
+  width: 100%;
+  min-height: 900px;
+  border: 0;
+}
+
+/* サイトの中に作るお問い合わせフォーム（<form action="https://…"> で外部のサービスへ送る型。例 SSGform）
+   入力欄ごとに <label for> を付け、「（必須）」は見出しの文字に書く。送信先は全ページの CSP の form-action に足す */
+.contact-form {
+  display: grid;
+  gap: 24px;
+  max-width: 720px;
+}
+
+.form-field {
+  display: grid;
+  gap: 8px;
+}
+
+.form-field__label {
+  font-weight: 700;
+}
+
+/* 文字を入れる欄（チェック・ラジオは .form-check に置く）。色は「1. 変数」の --c-field-…（帯の色を変えても白い欄・濃い文字のまま）
+   文字は 16px 以上（iPhone の Safari は 16px 未満の欄を押すと画面を拡大する） */
+.form-field input:not([type="checkbox"], [type="radio"], [type="file"], [type="range"], [type="color"]),
+.form-field textarea,
+.form-field select {
+  width: 100%;
+  min-height: var(--tap);
+  padding: 10px 12px;
+  border: 1px solid var(--c-field-line);
+  border-radius: var(--radius);
+  background: var(--c-field-bg);
+  color: var(--c-field-text);
+  font: inherit;
+  font-size: max(1rem, 16px);
+}
+
+.form-field textarea {
+  min-height: 12em;
+  resize: vertical;
+}
+
+/* 入力したあとで決まりに合わない欄（必須が空・メールアドレスの形でない など）に印を付ける。枠の太さは変えない */
+.form-field :is(input, textarea, select):user-invalid {
+  border-color: var(--c-error);
+  box-shadow: inset 0 0 0 1px var(--c-error);
+}
+
+.form-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: var(--tap);
+  font-weight: 700;
+}
+
+.form-check input {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin: .1em 0 0;
+  accent-color: var(--c-primary);
+}
+
+.form-check input:user-invalid {
+  outline: 2px solid var(--c-error);
+  outline-offset: 2px;
+}
+
+/* <button> をリンクのボタン（a.button）と同じ形に（行の高さは .button のまま） */
+button.button {
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+.contact-form .button {
+  justify-self: start;
+}
+
+/* スマホでは送信ボタンを横幅いっぱいに（押しやすく） */
+@media (max-width: 767.98px) {
+  .contact-form .button {
+    justify-self: stretch;
+  }
+}
+
+/* 迷惑な送信を見分ける入力欄（人には見せない。機械だけが埋める。フォームのサービスの説明どおりの名前にする） */
+.form-trap {
+  display: none;
+}
+
+.policy__section + .policy__section {
+  margin-top: 40px;
+}
+
+.page-body .policy__title {
+  font-size: 1.2rem;
+}
+
+.sitemap,
+.sitemap ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sitemap > li {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--c-line);
+}
+
+.sitemap ul {
+  margin-top: 4px;
+  padding-left: 1.5em;
+}
+
+.sitemap a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+}
+
+.notfound__text {
+  margin-bottom: 32px;
+}
+
+/* ---------- 9. お問い合わせ帯（全ページ共通） ---------- */
+
+.site-contact {
+  --c-focus: var(--c-focus-on-dark);
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+}
+
+.site-contact__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px 48px;
+  max-width: calc(var(--container) + var(--gutter) * 2);
+  margin: 0 auto;
+  padding: clamp(40px, 6vw, 64px) var(--gutter);
+}
+
+.site-contact p {
+  margin: 0;
+}
+
+.site-contact__title {
+  font-size: clamp(1.2rem, 2.4vw, 1.5rem);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.site-contact__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 32px;
+}
+
+.site-contact__tel {
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+.site-contact__tel-label {
+  margin-right: .4em;
+  font-size: .6em;
+}
+
+/* ---------- 10. フッター ---------- */
+
+.site-footer {
+  --c-focus: var(--c-focus-on-dark);
+  background: var(--c-footer-bg);
+  color: var(--c-on-footer);
+  font-size: 14px;
+}
+
+.site-footer__inner {
+  display: grid;
+  gap: 20px 40px;
+  max-width: calc(var(--container) + var(--gutter) * 2);
+  margin: 0 auto;
+  padding: 40px var(--gutter) 32px;
+}
+
+@media (min-width: 768px) {
+  .site-footer__inner {
+    grid-template-columns: 1fr auto;
+  }
+
+  .site-footer__copy {
+    grid-column: 1 / -1;
+  }
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+.site-footer__name {
+  font-weight: 700;
+}
+
+.site-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  color: var(--c-on-footer);
+}
+
+.site-footer__links a:hover {
+  color: var(--c-on-footer);
+  text-decoration-thickness: 2px;
+}
+
+.site-footer__copy {
+  padding-top: 20px;
+  border-top: 1px solid rgb(var(--c-white-rgb) / .15);
+  color: var(--c-on-footer-muted);
+  font-size: 12px;
+}
+
+/* ---------- 11. ライトボックス（画像の拡大表示。main.js が作る） ---------- */
+
+.lightbox {
+  --c-focus: var(--c-focus-on-dark);
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.lightbox::backdrop {
+  background: var(--c-backdrop);
+}
+
+.lightbox__stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 64px 72px;
+}
+
+.lightbox__stage img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* 書類・スキャン画像は幅いっぱいにして縦にスクロール */
+.lightbox--doc .lightbox__stage {
+  display: block;
+  overflow-y: auto;
+  text-align: center;
+}
+
+.lightbox--doc .lightbox__stage img {
+  max-height: none;
+  width: min(100%, 1000px);
+}
+
+.lightbox__prev,
+.lightbox__next,
+.lightbox__close {
+  position: fixed;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(var(--c-white-rgb) / .92);
+  color: var(--c-text);
+  cursor: pointer;
+}
+
+.lightbox__prev::before,
+.lightbox__next::before,
+.lightbox__close::before {
+  content: "";
+  width: 22px;
+  height: 22px;
+  background: currentColor;
+  -webkit-mask: var(--icon-arrow) center / contain no-repeat;
+  mask: var(--icon-arrow) center / contain no-repeat;
+}
+
+.lightbox__close::before {
+  -webkit-mask-image: var(--icon-close);
+  mask-image: var(--icon-close);
+}
+
+.lightbox__prev::before {
+  transform: scaleX(-1);
+}
+
+.lightbox__prev {
+  top: 50%;
+  left: 12px;
+  margin-top: -24px;
+}
+
+.lightbox__next {
+  top: 50%;
+  right: 12px;
+  margin-top: -24px;
+}
+
+.lightbox__close {
+  top: 12px;
+  right: 12px;
+}
+
+.lightbox [hidden] {
+  display: none;
+}
+
+.lightbox-open {
+  overflow: hidden;
+}
+
+@media (max-width: 767.98px) {
+  .lightbox__stage {
+    padding: 64px 8px;
+  }
+
+  .lightbox__prev,
+  .lightbox__next {
+    top: auto;
+    bottom: 12px;
+    margin-top: 0;
+  }
+}
+
+/* ---------- 12. 動きを減らす設定 ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- 13. 強制カラー（Windows のコントラスト テーマ） ---------- */
+
+@media (forced-colors: active) {
+  .button,
+  .global-nav__item--cta > a,
+  .subnav--tabs a,
+  .slideshow__prev,
+  .slideshow__next,
+  .lightbox__prev,
+  .lightbox__next,
+  .lightbox__close {
+    border: 1px solid ButtonText;
+  }
+
+  .global-nav__expand::before,
+  .button::after,
+  .zoomable::before,
+  .home-links__label::after,
+  .slideshow__prev::before,
+  .slideshow__next::before,
+  .lightbox__prev::before,
+  .lightbox__next::before,
+  .lightbox__close::before,
+  .page-body a[target="_blank"]:not(.button)::after {
+    background: ButtonText;
+  }
+
+  .slideshow__dot::before {
+    border-color: ButtonText;
+  }
+
+  .faq__q::after {
+    background: ButtonText;
+  }
+
+  .feature,
+  .step::before {
+    border: 1px solid CanvasText;
+  }
+
+  .slideshow__dot.is-active::before {
+    background: Highlight;
+  }
+}
+
+/* ---------- 14. このサイトの見た目（鵺・夜明け：上は黒、下に行くほど白。太い字と線）と、このサイトだけの部品 ----------
+   上の 1〜13 は共通のひな形。このサイトだけの見た目は、ここにまとめて書く（色は「1. 変数」）
+   ・ヘッダーは黒、トップは夜のグラデーション、本文の帯は上から順に黒→白、フッターは白
+   ・帯の色は「上から何番目の帯か」で決まる（帯を並べ替えても、上から暗→明のまま）。帯を9つ以上にするときは、下の「帯：上から順に暗→明」に足す */
+
+/* ヘッダー：黒（中のメニューも同じ色の考え方） */
+.site-header {
+  --c-bg: var(--dawn-0);
+  --c-text: var(--c-on-dark);
+  --c-ink: var(--c-on-dark);
+  --c-line: var(--c-dark-line);
+  --c-primary: var(--c-violet-light);
+  --c-focus: var(--c-focus-on-dark);
+  color: var(--c-text);
+}
+
+/* ヘッダーの奥行き：スクロールすると（main.js が is-scrolled を付ける）、少し透けて、下を流れる中身が
+   すりガラスごしのようにぼんやり見え、影が落ちる。ページのいちばん上では、透けない黒のまま。
+   ぼかしは ::before に掛ける（ヘッダーそのものに掛けると、スマホの全面メニュー〈position: fixed〉の基準がヘッダーになって崩れる） */
+.site-header.is-scrolled {
+  background: rgb(var(--c-shadow-rgb) / .86);
+  box-shadow: 0 12px 28px -12px rgb(var(--c-shadow-rgb) / .7);
+}
+
+.site-header.is-scrolled::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* メニューを開いている間は、透けさせない・ぼかさない・影を落とさない（全面メニューの地と揃える） */
+.nav-open .site-header.is-scrolled {
+  background: var(--c-bg);
+  box-shadow: none;
+}
+
+.nav-open .site-header.is-scrolled::before {
+  content: none;
+}
+
+/* 「透明を減らす」設定の方には、透けさせない */
+@media (prefers-reduced-transparency: reduce) {
+  .site-header.is-scrolled {
+    background: var(--c-bg);
+  }
+
+  .site-header.is-scrolled::before {
+    content: none;
+  }
+}
+
+/* 帯：上から順に暗→明（帯の中も上下のグラデーション） */
+.page-body--bands > .band:nth-of-type(1) { background: linear-gradient(var(--dawn-0), var(--dawn-1)); }
+.page-body--bands > .band:nth-of-type(2) { background: linear-gradient(var(--dawn-1), var(--dawn-2)); }
+.page-body--bands > .band:nth-of-type(3) { background: linear-gradient(var(--dawn-2), var(--dawn-3)); }
+.page-body--bands > .band:nth-of-type(4) { background: linear-gradient(var(--dawn-3), var(--dawn-4)); }
+.page-body--bands > .band:nth-of-type(5) { background: var(--grad-horizon-glow) top / 100% 180px no-repeat, linear-gradient(var(--dawn-5), var(--dawn-6)); }
+.page-body--bands > .band:nth-of-type(6) { background: linear-gradient(var(--dawn-6), var(--dawn-7)); }
+.page-body--bands > .band:nth-of-type(7) { background: linear-gradient(var(--dawn-7), var(--dawn-8)); }
+.page-body--bands > .band:nth-of-type(8) { background: linear-gradient(var(--dawn-8), var(--dawn-9)); }
+
+/* 暗い帯（1〜4番目）：白い文字・明るい印。カードの面は、地に白をうすく重ねる */
+.page-body--bands > .band:nth-of-type(-n+4) {
+  --c-text: var(--c-on-dark);
+  --c-text-muted: var(--c-on-dark);
+  --c-ink: var(--c-on-dark);
+  --c-line: var(--c-line-on-dark);
+  --c-primary: var(--c-violet-light);
+  --c-focus: var(--c-focus-on-dark);
+  --c-panel: rgb(var(--c-white-rgb) / .06);
+  --c-ring: rgb(var(--c-white-rgb) / .55);
+  --shadow-card: 0 2px 4px rgb(var(--c-shadow-rgb) / .3), 0 22px 40px -14px rgb(var(--c-shadow-rgb) / .65);
+  --edge-light: inset 0 1px 0 rgb(var(--c-white-rgb) / .2), inset 0 36px 36px -36px rgb(var(--c-white-rgb) / .07);
+  --grad-accent: var(--grad-accent-bright);
+  --grad-icon: var(--grad-accent-text-light);
+  color: var(--c-text);
+}
+
+/* 明るい帯（5番目から）：黒い文字。細い線は暗い半透明（白に近い線だと地に溶ける）。カードの面は、地に白を重ねる */
+.page-body--bands > .band:nth-of-type(n+5) {
+  --c-line: var(--c-line-on-light);
+  --c-panel: rgb(var(--c-white-rgb) / .5);
+}
+
+/* 地平線：暗い帯と明るい帯の境目（5番目の帯の上の端）に、夜明けの光の線 */
+.page-body--bands > .band:nth-of-type(5) {
+  position: relative;
+}
+
+.page-body--bands > .band:nth-of-type(5)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  background: var(--grad-horizon);
+  box-shadow: 0 0 26px 2px rgb(var(--c-pink-light-rgb) / .5); /* 線そのものが光って見えるように */
+}
+
+/* フッター：白（上に線。フォーカス枠は白地用の色に戻す） */
+.site-footer {
+  --c-focus: var(--c-primary);
+  border-top: 1px solid var(--c-line);
+}
+
+.site-footer__copy {
+  border-top-color: var(--c-line);
+}
+
+/* 見出しの最後の行に1〜2文字だけ残らないように（文節で折り返せるブラウザでは文節で） */
+h1,
+h2,
+h3,
+.faq__q {
+  text-wrap: balance;
+  word-break: auto-phrase;
+}
+
+/* 本文・箇条書きも、最後の行に1〜2字だけ残りにくく（対応していないブラウザではふつうに折り返す） */
+.page-body p,
+.page-body li {
+  text-wrap: pretty;
+}
+
+.checklist li {
+  word-break: auto-phrase;
+}
+
+/* 文字のロゴ（ロゴの画像ができたら画像に替え、この文字を alt にする） */
+.site-logo--text {
+  color: var(--c-ink);
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-decoration: none;
+}
+
+.site-logo--text:hover {
+  color: var(--c-primary);
+}
+
+/* ボタンは紫から臙脂へのグラデーション */
+.button,
+.global-nav__item--cta > a {
+  border-color: transparent;
+  background: var(--grad-accent);
+  background-origin: border-box;
+}
+
+.button:hover,
+.global-nav__item--cta > a:hover,
+.global-nav__item--cta.is-current > a {
+  border-color: transparent;
+  background: var(--grad-accent-hover);
+}
+
+/* 白いボタン（夜の面・暗い帯の上）。文字は、帯の中でも変わらない夜の色にする（--c-ink は暗い帯では白になるため） */
+.button--inverse,
+.button--inverse:hover {
+  border-color: var(--c-on-hero);
+  background: var(--c-on-hero);
+  color: var(--c-hero-surface);
+}
+
+.button--inverse:hover {
+  background: var(--c-primary-tint);
+}
+
+/* ボタン：マウスを乗せると少し浮き、矢印が少し進む（「動きを減らす」設定では動かさない。12. を見る） */
+.button {
+  box-shadow: inset 0 1px 0 rgb(var(--c-white-rgb) / .22), 0 8px 18px -8px rgb(var(--c-shadow-rgb) / .6);
+  transition: transform .15s, box-shadow .15s;
+}
+
+.button::after {
+  transition: transform .15s;
+}
+
+.button:hover {
+  box-shadow: inset 0 1px 0 rgb(var(--c-white-rgb) / .22), 0 16px 28px -10px rgb(var(--c-shadow-rgb) / .6);
+  transform: translateY(-2px);
+}
+
+/* 押している間は、少し沈む */
+.button:active {
+  box-shadow: inset 0 1px 0 rgb(var(--c-white-rgb) / .22), 0 3px 8px -4px rgb(var(--c-shadow-rgb) / .6);
+  transform: translateY(1px);
+}
+
+.button:hover::after {
+  transform: translateX(3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button:hover,
+  .button:hover::after,
+  .button:active {
+    transform: none;
+  }
+}
+
+/* 帯の最後に置く「無料で相談する」（いまは「ご利用の流れ」の最後。ヘッダー・トップのボタンと同じ文字・同じ行き先）。上に一文 */
+.band-cta {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  margin-top: clamp(40px, 6vw, 64px);
+  text-align: center;
+}
+
+.page-body .band-cta__text {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-wrap: balance;
+  word-break: auto-phrase;
+}
+
+.band-cta .button {
+  width: min(100%, 360px);
+  min-height: 56px;
+  padding: 12px 40px;
+  font-size: 1.05rem;
+}
+
+/* スマホでも「無料で相談する」をヘッダーに出す（並びはロゴ → 相談 → メニューボタン。Tab の順も同じ）。
+   PC（960px 以上）はナビの中のボタンを使うので出さない。メニューを開いている間は、メニューの中の同じボタンを使う */
+.header-cta {
+  display: none;
+}
+
+@media (max-width: 959.98px) {
+  .js .site-header__inner {
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  /* 文字を大きくする設定などで入りきらないときは、ロゴの文字が折り返す（重ならない） */
+  .js .site-logo--text {
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
+  .js .header-cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+    margin-left: auto;
+    padding: 0 12px;
+    background: var(--grad-accent);
+    color: var(--c-on-primary);
+    font-size: .875rem;
+    font-weight: 700;
+    line-height: 1.3;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .js .header-cta:hover {
+    background: var(--grad-accent-hover);
+    color: var(--c-on-primary);
+  }
+
+  .js .nav-open .header-cta {
+    visibility: hidden;
+  }
+}
+
+/* 狭い画面：「メニュー」の文字は見た目だけ隠し（読み上げには残す）、ロゴと相談のボタンを少し小さく */
+@media (max-width: 399.98px) {
+  .js .nav-toggle__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .js .site-logo--text {
+    font-size: 1.2rem;
+  }
+
+  .js .header-cta {
+    padding: 0 8px;
+    font-size: .8125rem;
+  }
+}
+
+/* トップ：夜のグラデーションの面に、太く大きな見出し。「、」の後ろだけで折り返す（.nw のまとまり）。
+   右下から夜明けの光。右（960px 未満は下）に、飾りの絵「言葉で頼むと、ホームページができる」 */
+.home-hero {
+  min-height: 0;
+  overflow: hidden; /* 絵の後ろの丸い光が、次の帯へはみ出さないように */
+  background-color: var(--c-hero-surface);
+  background-image: var(--grad-dawn-glow), var(--grad-night);
+  color: var(--c-on-hero);
+}
+
+.home-hero__inner {
+  display: grid;
+  gap: 40px clamp(24px, 4vw, 48px);
+  align-items: center;
+  padding-top: clamp(48px, 7vw, 96px);
+  padding-bottom: clamp(48px, 7vw, 96px);
+}
+
+.home-hero__title {
+  font-size: clamp(1.5rem, 7.4vw, 3.8rem);
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: .01em;
+}
+
+.home-hero__lead {
+  max-width: 32em;
+  color: var(--c-on-hero-muted);
+  font-size: clamp(1rem, 1.5vw, 1.15rem);
+  line-height: 1.9;
+  text-wrap: pretty;
+  word-break: auto-phrase;
+}
+
+.home-hero__actions .button {
+  min-height: 56px;
+  padding: 12px 40px;
+  font-size: 1.05rem;
+}
+
+.home-hero__actions .button:not(:hover, :active) {
+  box-shadow: 0 14px 30px -10px rgb(var(--c-shadow-rgb) / .7);
+}
+
+@media (min-width: 768px) {
+  .home-hero__inner {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+  }
+
+  /* 2列のときは、見出しの1行（「ホームページのことは、」）が左の列に収まる大きさにする */
+  .home-hero__title {
+    font-size: clamp(2rem, 4.2vw, 3.2rem);
+  }
+}
+
+/* トップの絵：吹き出し（頼み方の例の言葉）から、点線の矢印で、ホームページの画面（飾り）へ。色は変数から取る。
+   奥行き：吹き出しは手前に浮かせ（影）、画面は立体に傾けて、後ろに紙を重ね、下に影を落とす。動かさない */
+.hero-art {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .hero-art {
+    max-width: 440px;
+    margin-right: 0;
+  }
+}
+
+.hero-art__bubble {
+  position: relative;
+  border: 1.5px solid rgb(var(--c-white-rgb) / .45);
+  background: rgb(var(--c-white-rgb) / .14);
+  box-shadow: inset 0 1px 0 rgb(var(--c-white-rgb) / .3), 0 18px 32px -12px rgb(var(--c-shadow-rgb) / .75);
+}
+
+/* 吹き出しのしっぽ（左下の角から下へ） */
+.hero-art__bubble::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: -1.5px;
+  width: 15px;
+  height: 12px;
+  margin-top: 1.5px;
+  background: rgb(var(--c-white-rgb) / .45);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+/* 絵の舞台：後ろに夜明けの光、その上に矢印の層（平ら）と画面の層（立体）を重ねる */
+.hero-art__stage {
+  position: relative;
+  aspect-ratio: 440 / 300;
+  perspective: 900px;
+}
+
+.hero-art__stage::before {
+  content: "";
+  position: absolute;
+  inset: 18% -8% -22% 22%;
+  background: radial-gradient(closest-side, rgb(var(--c-pink-light-rgb) / .5), transparent);
+}
+
+.hero-art__link,
+.hero-art__tilt,
+.hero-art__screen {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-art__link,
+.hero-art__screen {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* 画面を立体に傾ける（左が奥、右が手前。上を少し奥へ） */
+.hero-art__tilt {
+  transform: rotateY(-22deg) rotateX(9deg);
+  transform-origin: 70% 50%;
+}
+
+/* 画面の下に落ちる影（画面の四角と同じ位置に置き、同じ面で傾く） */
+.hero-art__tilt::before {
+  content: "";
+  position: absolute;
+  inset: 13.3% 3.2% 6.7% 19.5%;
+  box-shadow: -14px 30px 38px 2px rgb(var(--c-shadow-rgb) / .7);
+}
+
+.hero-art__stop-a {
+  stop-color: var(--c-violet-light);
+}
+
+.hero-art__stop-b {
+  stop-color: var(--c-pink-light);
+}
+
+.hero-art__path,
+.hero-art__arrow {
+  fill: none;
+  stroke: rgb(var(--c-white-rgb) / .72);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hero-art__path {
+  stroke-dasharray: 1 8;
+}
+
+/* 画面の後ろに重なった紙（奥行き） */
+.hero-art__sheet {
+  fill: rgb(var(--c-white-rgb) / .06);
+  stroke: rgb(var(--c-white-rgb) / .3);
+  stroke-width: 1.5;
+}
+
+.hero-art__sheet--far {
+  fill: rgb(var(--c-white-rgb) / .03);
+  stroke: rgb(var(--c-white-rgb) / .18);
+}
+
+/* 画面の面は、後ろの紙の線が透けない濃さにする */
+.hero-art__window {
+  fill: rgb(var(--c-shadow-rgb) / .9);
+  stroke: rgb(var(--c-white-rgb) / .5);
+  stroke-width: 1.5;
+}
+
+/* 画面の表のつや（斜めの光） */
+.hero-art__gloss {
+  fill: rgb(var(--c-white-rgb) / .07);
+}
+
+/* 浮いたチェックの印の影 */
+.hero-art__badge-shadow {
+  fill: rgb(var(--c-shadow-rgb) / .45);
+}
+
+.hero-art__rule {
+  fill: none;
+  stroke: rgb(var(--c-white-rgb) / .3);
+  stroke-width: 1.5;
+}
+
+.hero-art__dot {
+  fill: rgb(var(--c-white-rgb) / .5);
+}
+
+.hero-art__ink {
+  fill: var(--c-hero-surface);
+  opacity: .82;
+}
+
+.hero-art__paper,
+.hero-art__badge {
+  fill: var(--c-on-hero);
+}
+
+.hero-art__card {
+  fill: rgb(var(--c-white-rgb) / .12);
+}
+
+.hero-art__mark {
+  fill: var(--c-pink-light);
+}
+
+.hero-art__line {
+  fill: rgb(var(--c-white-rgb) / .45);
+}
+
+.hero-art__check {
+  fill: none;
+  stroke: var(--c-primary);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* 吹き出しに言葉を入れるとき（頼み方の例） */
+.hero-art__say {
+  width: fit-content;
+  max-width: 86%;
+}
+
+.hero-art__label {
+  margin: 0 0 6px;
+  color: var(--c-on-hero-muted);
+  font-size: .8125rem;
+  font-weight: 700;
+}
+
+.hero-art__bubble--text {
+  margin: 0;
+  padding: 14px 18px;
+  color: var(--c-on-hero);
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+/* トップのボタンの下の、短いポイント（チェックの印つき） */
+.hero-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hero-points li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 10px;
+  border: 1px solid rgb(var(--c-white-rgb) / .36);
+  background: rgb(var(--c-white-rgb) / .08);
+  box-shadow: inset 0 1px 0 rgb(var(--c-white-rgb) / .2), 0 8px 16px -8px rgb(var(--c-shadow-rgb) / .6);
+  color: var(--c-on-hero);
+  font-size: .9rem;
+  font-weight: 700;
+}
+
+.hero-points li::before {
+  content: "";
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background: var(--c-pink-light);
+  -webkit-mask: var(--icon-check) center / contain no-repeat;
+  mask: var(--icon-check) center / contain no-repeat;
+}
+
+/* 帯の見出し：太く大きく、下に太いグラデーションの線 */
+.page-body h2 {
+  padding-left: 0;
+  border-left: 0;
+  font-size: clamp(1.5rem, 3.4vw, 2.3rem);
+  font-weight: 800;
+  letter-spacing: .02em;
+}
+
+.page-body h2::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 6px;
+  margin-top: 14px;
+  background: var(--grad-accent);
+}
+
+.page-title {
+  font-weight: 800;
+}
+
+.page-title::after {
+  width: 56px;
+  height: 6px;
+  border-radius: 0;
+  background: var(--grad-accent);
+}
+
+/* 困りごとの一覧（カード。丸の中にチェックの印。768px 以上は2列） */
+.checklist {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 768px) {
+  .checklist {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+}
+
+/* 文字は上下の中央に置く（align-content）。flex にはしない：文の中に <span> があると、文が横に割れて並んでしまうため */
+.checklist li {
+  position: relative;
+  align-content: center;
+  min-height: 76px;
+  padding: 18px 20px 18px 68px;
+  border: 1px solid var(--c-line);
+  background: var(--c-panel);
+  box-shadow: var(--shadow-card), var(--edge-light);
+  font-weight: 700;
+}
+
+.checklist li::before,
+.checklist li::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+}
+
+.checklist li::before {
+  left: 20px;
+  width: 32px;
+  height: 32px;
+  margin-top: -16px;
+  border-radius: 50%;
+  background: var(--grad-accent);
+  box-shadow: var(--shadow-bead);
+}
+
+.checklist li::after {
+  left: 27px;
+  width: 18px;
+  height: 18px;
+  margin-top: -9px;
+  background: var(--c-on-primary);
+  -webkit-mask: var(--icon-check) center / contain no-repeat;
+  mask: var(--icon-check) center / contain no-repeat;
+}
+
+/* 特長・できること：960px 未満は1列、960px 以上は3列 */
+.features,
+.cards {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 960px) {
+  .features,
+  .cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* 特長：カードの上の端にグラデーションの線、番号は大きくグラデーションの文字 */
+.feature {
+  position: relative;
+  padding: 32px 24px 28px;
+  border: 0;
+  border-radius: 0;
+  background: var(--c-panel);
+  box-shadow: var(--shadow-card), var(--edge-light);
+}
+
+.feature::after,
+.bullets__key::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 4px;
+  background: var(--grad-accent);
+}
+
+.feature::before {
+  width: fit-content;
+  background: var(--grad-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 2.6rem;
+  font-weight: 800;
+}
+
+.page-body--bands > .band:nth-of-type(-n+4) .feature::before {
+  background: var(--grad-accent-text-light);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* できること：カード。上に絵（飾り）を付けるときは <li class="card card--icon-renew"> のように書く
+   （renew＝作り変える・newpage＝新しく作る・chat＝言葉で頼む） */
+.card {
+  border: 1px solid var(--c-line);
+  background: var(--c-panel);
+  box-shadow: var(--shadow-card), var(--edge-light);
+}
+
+.card__body {
+  padding: 28px 24px;
+}
+
+[class*="card--icon-"] .card__body::before {
+  content: "";
+  display: block;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 18px;
+  background: var(--grad-icon);
+  -webkit-mask: center / contain no-repeat;
+  mask: center / contain no-repeat;
+}
+
+.card--icon-renew .card__body::before {
+  -webkit-mask-image: var(--icon-renew);
+  mask-image: var(--icon-renew);
+}
+
+.card--icon-newpage .card__body::before {
+  -webkit-mask-image: var(--icon-newpage);
+  mask-image: var(--icon-newpage);
+}
+
+.card--icon-chat .card__body::before {
+  -webkit-mask-image: var(--icon-chat);
+  mask-image: var(--icon-chat);
+}
+
+/* ご利用の流れ：番号の丸はグラデーション。丸を線でつなぐ（縦に並ぶときは縦の線、PC の3列×2段では横の線） */
+.steps {
+  gap: 0;
+}
+
+.step {
+  padding: 6px 0 32px 68px;
+  border: 0;
+  background: transparent;
+}
+
+.step:last-child {
+  padding-bottom: 0;
+}
+
+.step::before {
+  top: 0;
+  left: 0;
+  width: 44px;
+  height: 44px;
+  background: var(--grad-accent);
+  box-shadow: 0 0 0 2px var(--c-ring), var(--shadow-bead);
+}
+
+.step::after {
+  content: "";
+  position: absolute;
+  top: 52px;
+  bottom: 8px;
+  left: 21px;
+  width: 2px;
+  background: var(--c-ink);
+  opacity: .6;
+}
+
+.step:last-child::after {
+  content: none;
+}
+
+@media (min-width: 960px) {
+  .steps--grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 44px 32px;
+  }
+
+  .steps--grid .step {
+    padding: 64px 0 0;
+  }
+
+  .steps--grid .step::after {
+    top: 21px;
+    right: -24px;
+    bottom: auto;
+    left: 56px;
+    width: auto;
+    height: 2px;
+  }
+
+  .steps--grid .step:nth-child(3n)::after {
+    content: none;
+  }
+}
+
+/* 箇条書き（費用の考え方）。PC では1行が長くなりすぎないよう幅を抑える */
+.bullets {
+  max-width: 820px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bullets li {
+  position: relative;
+  padding: 14px 4px 14px 28px;
+  border-bottom: 1px solid var(--c-line);
+}
+
+.bullets li:first-child {
+  border-top: 2px solid var(--c-ink);
+}
+
+.bullets li::before {
+  content: "";
+  position: absolute;
+  top: 1.45em;
+  left: 6px;
+  width: 10px;
+  height: 10px;
+  background: var(--grad-accent);
+}
+
+/* 費用：はじめの大事な項目（<li class="bullets__key">）をカードにして、<strong> の言葉を大きく見せる。
+   文は変えない（<strong> で囲むだけ）。<strong> は文の中に置いたまま（インラインのまま）、前後で行を変える
+   （ブロックにすると、コピーしたときやページ内の検索で、文が3つに切れるため）。
+   768px 以上はカードを3列に並べ、残りの項目はその下に1列で並べる */
+.bullets--price {
+  display: grid;
+  gap: 0 20px;
+  max-width: none;
+}
+
+.bullets--price li {
+  grid-column: 1 / -1;
+}
+
+.bullets--price li:first-child {
+  border-top: 0;
+}
+
+.bullets--price .bullets__key {
+  margin-bottom: 16px;
+  padding: 26px 22px 22px;
+  border: 0;
+  background: var(--c-panel);
+  box-shadow: var(--shadow-card), var(--edge-light);
+  font-weight: 700;
+  text-wrap: balance;
+  word-break: auto-phrase;
+}
+
+.bullets--price .bullets__key::before {
+  content: none;
+}
+
+.bullets--price .bullets__key + li:not(.bullets__key) {
+  margin-top: 8px;
+  border-top: 2px solid var(--c-ink);
+}
+
+.bullets__key strong {
+  color: var(--c-primary);
+  font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+/* <strong> の前後で行を変える（前後の言葉 <span class="bullets__pre">・<span class="bullets__post"> の端に、行の区切りを入れる） */
+.bullets__pre::after,
+.bullets__post::before {
+  content: "\A";
+  white-space: pre;
+}
+
+@media (min-width: 768px) {
+  .bullets--price {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .bullets--price .bullets__key {
+    grid-column: auto;
+    margin-bottom: 24px;
+  }
+}
+
+/* 紹介文・フォーム・プライバシーポリシーの本文も、費用・よくある質問・運営者と同じ幅に揃える */
+.section-lead,
+.contact-form,
+.policy {
+  max-width: 820px;
+}
+
+/* よくある質問：1問ずつカード。幅を抑える */
+.faq {
+  display: grid;
+  gap: 10px;
+  max-width: 820px;
+  border-top: 0;
+}
+
+.faq__item {
+  border: 0;
+  background: var(--c-panel);
+  box-shadow: var(--shadow-card-near), var(--edge-light);
+}
+
+.faq__q {
+  padding: 18px 20px;
+}
+
+.faq__a {
+  padding: 0 20px 18px;
+}
+
+/* 運営者の表：カード */
+.spec {
+  max-width: 820px;
+  border-top: 2px solid var(--c-ink);
+}
+
+.page-body--bands .spec {
+  padding: 4px 24px;
+  background: var(--c-panel);
+  box-shadow: var(--shadow-card), var(--edge-light);
+}
+
+.page-body--bands .spec__row:last-child {
+  border-bottom: 0;
+}
+
+/* 見出しを左、中身を右に置く帯（960px 以上。よくある質問・運営者・お問い合わせ）。
+   <div class="band__inner band__inner--split"> の中に <div class="band__head">（見出し・紹介文）と <div class="band__body">（中身）。
+   中身が長いとき、見出しは画面の上に残る */
+.band__head > :first-child {
+  margin-top: 0;
+}
+
+@media (min-width: 960px) {
+  .band__inner--split {
+    display: grid;
+    grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
+    gap: 0 56px;
+    align-items: start;
+  }
+
+  .band__inner--split .band__head {
+    position: sticky;
+    top: calc(var(--header-h) + 32px);
+  }
+
+  .band__inner--split .faq,
+  .band__inner--split .spec,
+  .band__inner--split .contact-form {
+    max-width: none;
+  }
+}
+
+/* お問い合わせフォーム：白いカード（上の端にグラデーションの線） */
+.page-body--bands .contact-form {
+  --form-pad: clamp(20px, 4vw, 40px);
+  padding: var(--form-pad);
+  background: var(--c-bg);
+  box-shadow: var(--shadow-float);
+}
+
+.page-body--bands .contact-form::before {
+  content: "";
+  height: 4px;
+  margin: calc(var(--form-pad) * -1) calc(var(--form-pad) * -1) 0;
+  background: var(--grad-accent);
+}
+
+.page-body--bands .contact-form .button {
+  min-height: 56px;
+  padding: 12px 48px;
+  font-size: 1.05rem;
+}
+
+/* プライバシーポリシーの制定日 */
+.policy__date {
+  margin-top: 40px;
+  color: var(--c-text-muted);
+}
+
+@media (forced-colors: active) {
+  .checklist li::after,
+  .bullets li::before,
+  .hero-points li::before,
+  [class*="card--icon-"] .card__body::before,
+  .step::after,
+  .feature::after,
+  .bullets__key::after {
+    background: CanvasText;
+  }
+
+  .checklist li::before {
+    background: none;
+  }
+
+  .feature::before {
+    background: none;
+    color: CanvasText;
+  }
+
+  .feature,
+  .faq__item,
+  .bullets--price .bullets__key,
+  .page-body--bands .spec,
+  .page-body--bands .contact-form {
+    border: 1px solid CanvasText;
+  }
+
+  .hero-art__bubble::after {
+    background: CanvasText;
+  }
+
+  /* 飾りの絵（光・矢印・画面）は出さない（色を置き換えると形が分からなくなるため）。吹き出しの言葉は出す */
+  .hero-art__stage {
+    display: none;
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "_説明": [
+    "このサイト専用の設定。tools/check_site.py が読む。",
+    "site_name: 会社名（og:site_name・<title> の後ろと同じ）",
+    "site_url: 本番のトップページの URL（https://…/）。canonical・OGP・sitemap.xml と同じにする",
+    "title_suffix: <title> の後ろに付ける文字。省略すると「 - 会社名」。確かめないなら空文字",
+    "repo_name: リポジトリ名（404.html の基準パス）。.git があればそちらを優先する",
+    "contact_page: お問い合わせフォームの埋め込み枠（id=contact-form）があるページ",
+    "sitemap_page: HTML のサイトマップのページ（無い型なら空文字）",
+    "no_current: グローバルナビの現在位置を付けないページ",
+    "sitemap_xml_exclude: sitemap.xml に載せないページ（404.html はいつも載せない）",
+    "allowed_iframes: 置いてよい埋め込み（iframe）の URL の始まり。お問い合わせフォームの枠の中は別に許す",
+    "old_service_markers: 旧サイトのサービスの名前（画像配信の URL などに含まれる文字）。残っていたら知らせる",
+    "analytics_pixel: アクセス解析の計測画像の読み込み元（例 https://計測サービスのホスト名）。Cookie を使わない、画像を1つ読み込ませて数える型だけ（CLAUDE.md 6.4）。使わないなら空文字。入れたら全ページの CSP の img-src にも同じものを足し、各ページに計測画像を1つ置く（フッターの後ろ）",
+    "shared_blocks: 全ページで同じ内容にする共通部分（header＝ヘッダーとナビ・contact＝お問い合わせ帯・footer＝フッター）。1ページ型は contact を使わない",
+    "1ページ型：メニューはページの中のセクション（#features など）へ移るリンク。お問い合わせはトップページの #contact に置く"
+  ],
+  "site_name": "うちのWeb係",
+  "site_url": "https://www.example.com/",
+  "repo_name": "website",
+  "contact_page": "index.html",
+  "sitemap_page": "",
+  "no_current": [
+    "privacy/",
+    "404.html",
+    "thanks/"
+  ],
+  "sitemap_xml_exclude": [
+    "privacy/",
+    "thanks/"
+  ],
+  "shared_blocks": [
+    "header",
+    "footer"
+  ],
+  "allowed_iframes": [],
+  "old_service_markers": [],
+  "analytics_pixel": ""
+}

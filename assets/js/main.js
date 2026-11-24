@@ -5,6 +5,7 @@
    - スライドショー（.slideshow）
    - 画像の拡大表示（a[data-lightbox]）
    - コピーライトの年（.js-year）
+   - フォームの入力の誤りを、欄の下に文で知らせる（form.contact-form。文は各欄の data-error-required・data-error-type）
    ページに <script>…</script> を増やさず、新しい処理はこのファイルに書く（CSP で止められるため）。
    fetch などで外部と通信しない（CSP の default-src 'none' で止められる）。 */
 (function () {
@@ -327,6 +328,69 @@
       document.dispatchEvent(new CustomEvent("lightbox:close"));
     });
   }
+
+  /* ---------- フォームの入力の誤りを、欄の下に文で知らせる（form.contact-form） ----------
+     ブラウザ自身の吹き出しは、ブラウザによって出方が違い、数秒で消えるので、送るときに足りない欄の下へ文を出し、
+     最初の欄へ移る（JIS X 8341-3 の 3.3.1・3.3.3）。文は各欄の data-error-required（空のとき）・data-error-type
+     （メールアドレスの形などが違うとき）。無ければブラウザの文を使う。JavaScript が動かないときは、今までどおりブラウザが知らせる。 */
+  each(document.querySelectorAll("form.contact-form"), function (form) {
+    var fields = Array.prototype.filter.call(form.querySelectorAll("input, textarea, select"), function (el) {
+      return el.name && el.willValidate && !el.closest(".form-trap") && el.type !== "hidden";
+    });
+    if (!fields.length) return;
+    form.noValidate = true;
+    var describe = function (el, id, on) {
+      var ids = (el.getAttribute("aria-describedby") || "").split(/\s+/).filter(function (x) { return x && x !== id; });
+      if (on) ids.push(id);
+      if (ids.length) el.setAttribute("aria-describedby", ids.join(" ")); else el.removeAttribute("aria-describedby");
+    };
+    var messageFor = function (el) {
+      var v = el.validity;
+      if (v.valid) return "";
+      if (v.valueMissing && el.getAttribute("data-error-required")) return el.getAttribute("data-error-required");
+      if ((v.typeMismatch || v.patternMismatch) && el.getAttribute("data-error-type")) return el.getAttribute("data-error-type");
+      return el.getAttribute("data-error-required") || el.validationMessage;
+    };
+    var show = function (el, msg) {
+      var id = (el.id || el.name) + "-error";
+      var box = document.getElementById(id);
+      if (!msg) {
+        if (box) box.parentNode.removeChild(box);
+        el.removeAttribute("aria-invalid");
+        describe(el, id, false);
+        return;
+      }
+      if (!box) {
+        box = document.createElement("p");
+        box.id = id;
+        box.className = "form-error";
+        var wrap = el.closest(".form-check");
+        if (wrap) wrap.parentNode.insertBefore(box, wrap.nextSibling);
+        else (el.closest(".form-field") || el.parentNode).appendChild(box);
+      }
+      box.textContent = msg;
+      el.setAttribute("aria-invalid", "true");
+      describe(el, id, true);
+    };
+    form.addEventListener("submit", function (e) {
+      var first = null;
+      fields.forEach(function (el) {
+        var msg = messageFor(el);
+        show(el, msg);
+        if (msg && !first) first = el;
+      });
+      if (first) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+    // 一度知らせた欄は、直したらすぐに文を消す（まだ違えば文を入れ替える）
+    fields.forEach(function (el) {
+      var update = function () { if (el.getAttribute("aria-invalid") === "true") show(el, messageFor(el)); };
+      el.addEventListener("input", update);
+      el.addEventListener("change", update);
+    });
+  });
 
   /* ---------- コピーライトの年 ---------- */
   each(document.querySelectorAll(".js-year"), function (el) {

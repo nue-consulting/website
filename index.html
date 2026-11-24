@@ -278,15 +278,15 @@
     <form class="contact-form" id="contact-form" action="https://ssgform.com/s/r63WhicDxvJy" method="post">
       <div class="form-field">
         <label class="form-field__label" for="f-company">会社名（必須）</label>
-        <input id="f-company" name="会社名" type="text" autocomplete="organization" required>
+        <input id="f-company" name="会社名" type="text" autocomplete="organization" required data-error-required="会社名を入力してください。">
       </div>
       <div class="form-field">
         <label class="form-field__label" for="f-name">お名前（必須）</label>
-        <input id="f-name" name="お名前" type="text" autocomplete="name" required>
+        <input id="f-name" name="お名前" type="text" autocomplete="name" required data-error-required="お名前を入力してください。">
       </div>
       <div class="form-field">
         <label class="form-field__label" for="f-email">メールアドレス（必須）</label>
-        <input id="f-email" name="メールアドレス" type="email" autocomplete="email" required>
+        <input id="f-email" name="メールアドレス" type="email" autocomplete="email" required data-error-required="メールアドレスを入力してください。" data-error-type="メールアドレスの形が正しくありません。例：info@example.com">
       </div>
       <div class="form-field">
         <label class="form-field__label" for="f-url">今のホームページのURL（あれば）</label>
@@ -294,10 +294,10 @@
       </div>
       <div class="form-field">
         <label class="form-field__label" for="f-message">ご相談の内容（必須）</label>
-        <textarea id="f-message" name="ご相談の内容" rows="8" required></textarea>
+        <textarea id="f-message" name="ご相談の内容" rows="8" required data-error-required="ご相談の内容を入力してください。"></textarea>
       </div>
       <div class="form-check">
-        <input type="checkbox" id="f-agree" name="プライバシーポリシー" value="同意する" required>
+        <input type="checkbox" id="f-agree" name="プライバシーポリシー" value="同意する" required data-error-required="プライバシーポリシーに同意する場合は、チェックを入れてください。">
         <label for="f-agree"><a href="privacy/">プライバシーポリシー</a>に同意する（必須）</label>
       </div>
       <!-- 迷惑な送信を見分ける欄（SSGform の説明どおりの名前 wana。人には見せない。消さない） -->
@@ -320,8 +320,9 @@
     </div>
     <ul class="site-footer__links">
       <li><a href="privacy/">プライバシーポリシー</a></li>
+      <li><a href="accessibility/">ウェブアクセシビリティ方針</a></li>
     </ul>
-    <p class="site-footer__copy">Copyright © 2026 鵺 All Rights Reserved.</p>
+    <p class="site-footer__copy"><span lang="en">Copyright ©</span> 2026 鵺 <span lang="en">All Rights Reserved.</span></p>
   </div>
 </footer>
 <img class="visually-hidden" src="https://yojiumaji.goatcounter.com/count?p=/" alt="" width="1" height="1">

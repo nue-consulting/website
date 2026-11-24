@@ -188,7 +188,7 @@ im.convert("RGB").save("assets/img/xxx/yyy.jpg", "JPEG", quality=80, optimize=Tr
 - HTML に `<style>`・`style="…"`・`onclick="…"` などを書かない（止められる）。
 - 固定ヘッダーの下に隠れないようにする指定は、ページの中の行き先（id のある所）とヘッダーの外の部品に付けた `scroll-margin-top`（`style.css` の「2.」）。`html` に `scroll-padding-top` を付けない（キーボードでヘッダーへ移るたびにページが動いてしまう）。
 - GitHub Pages ではサーバー側の設定ができないため、他サイトの枠の中に表示されるのを防ぐ指定（`frame-ancestors`）は効かない。
-- Google 翻訳のウェブページ翻訳（translate.goog）を通すと、このサイトは翻訳されず、見た目も崩れる（ブラウザ内蔵の翻訳は使える）。独自ドメインに切り替えた後は、全ページの CSP の `script-src`・`style-src`・`img-src` に本番の読み込み元を足すと、崩れずに表示される（`check_site.py` はこの追加だけは認める）。
+- Google 翻訳のウェブページ翻訳（translate.goog）を通すと、このサイトは翻訳されない（ブラウザ内蔵の翻訳は使える）。そのため、全ページの CSP の `script-src`・`style-src`・`img-src` に本番の読み込み元 `https://www.nue-consulting.com` を足してある（2026-11-24。オーナーの依頼。`check_site.py` はこの追加だけは認める）。翻訳そのものはされないが、見た目は崩れない。
 
 ### アクセス解析（計測の画像）
 サービスは GoatCounter（2026-11 にオーナーが決定）。計測の画像の URL は `https://yojiumaji.goatcounter.com/count?p=そのページの場所`（トップ `p=/`、プライバシーポリシー `p=/privacy/`、お礼のページ `p=/thanks/`、404 は `p=/404`）。`yojiumaji` は GoatCounter のアカウント名（2026-11-24 にオーナーから。下の 1〜3 は入れてある）。ページを足したら、そのページにも計測の画像を1つ置く。Cookie を使わず、画像を1つ読み込ませて数える型だけを使う（外部のスクリプトは読み込まない。この方式では、リンク元と画面の大きさは記録されない）。

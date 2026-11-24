@@ -52,12 +52,12 @@
 <!-- ===== 見出し帯ここまで ===== -->
 <div class="page-body">
 <div class="policy">
-<!-- 「準拠」と書けるのは、全ページを試験して、目標の達成基準をすべて満たしたときだけ（WAIC の対応度表記ガイドライン 2021年4月版）。ページを変えたら試験し直す -->
+<!-- 対応度の表記は WAIC の対応度表記ガイドライン 2021年4月版。外部のサービス（SSGform）が出す画面を試験できないため「一部準拠」（部分適合に関する記述と今後の対応方針が要る）。ページを変えたら試験し直す -->
 <p class="policy__lead">鵺（NUE）は、年齢や障害の有無、使う機器や環境にかかわらず、だれもがこのウェブサイトの情報を得て、お問い合わせができるよう、ウェブアクセシビリティの確保と向上に取り組みます。</p>
 <section class="policy__section">
   <h2 class="policy__title">方針</h2>
   <div class="policy__text">
-    <p>日本産業規格 JIS X 8341-3:2016「高齢者・障害者等配慮設計指針－情報通信における機器，ソフトウェア及びサービス－第3部：ウェブコンテンツ」の適合レベルAAに準拠することを目標とします。あわせて、WCAG 2.2 で加わったレベルA及びAAの達成基準も満たすようにします。</p>
+    <p>日本産業規格 JIS X 8341-3:2016「高齢者・障害者等配慮設計指針－情報通信における機器，ソフトウェア及びサービス－第3部：ウェブコンテンツ」の適合レベルAAに準拠することを目標とします。あわせて、WCAG 2.1 及び WCAG 2.2 で加わったレベルA及びAAの達成基準も満たすようにします。</p>
   </div>
 </section>
 <section class="policy__section">
@@ -69,8 +69,12 @@
 <section class="policy__section">
   <h2 class="policy__title">対応の状況</h2>
   <div class="policy__text">
-    <p>JIS X 8341-3:2016 の適合レベルAAに準拠しています。WCAG 2.2 で加わったレベルA及びAAの達成基準も、すべて満たしています。</p>
-    <p>「準拠」という表記は、情報通信アクセス協議会 ウェブアクセシビリティ基盤委員会「<a href="https://waic.jp/docs/jis2016/compliance-guidelines/202104/">ウェブコンテンツの JIS X 8341-3:2016 対応度表記ガイドライン 2021年4月版</a>」で定められた表記によります。</p>
+    <p>JIS X 8341-3:2016 の適合レベルAAに一部準拠しています。このウェブサイトのすべてのページは、適合レベルAAの達成基準をすべて満たしています。WCAG 2.1 及び WCAG 2.2 で加わったレベルA及びAAの達成基準も、すべて満たしています。</p>
+    <p>「一部準拠」という表記は、情報通信アクセス協議会 ウェブアクセシビリティ基盤委員会「<a href="https://waic.jp/docs/jis2016/compliance-guidelines/202104/">ウェブコンテンツの JIS X 8341-3:2016 対応度表記ガイドライン 2021年4月版</a>」で定められた表記によります。</p>
+    <h3>部分適合に関する記述</h3>
+    <p>お問い合わせの送信には、外部のフォームのサービス（SSGform）を使っています。海外から送るときなどに、このサービスが、ロボットでないかを確かめる画面（Cloudflare 社の画面。英語）や、送れなかったことを知らせる画面を表示することがあります。これらの画面は当方が管理していない第三者のコンテンツのため、試験の対象に含めていません。</p>
+    <h3>今後の対応</h3>
+    <p>外部のサービスが表示する画面について、提供元の対応の状況を確かめ、必要に応じてお問い合わせの方法を見直します。</p>
   </div>
 </section>
 <section class="policy__section">
@@ -78,7 +82,15 @@
   <div class="policy__text">
     <ul>
       <li>試験をした日：2026年11月24日</li>
-      <li>試験をしたページ：このウェブサイトのすべてのページ（トップ／プライバシーポリシー／ウェブアクセシビリティ方針／お問い合わせのお礼／お探しのページが見つかりません）</li>
+      <li>試験をしたページ：このウェブサイトのすべてのページ（5ページ）
+        <ul>
+          <li>トップ（https://www.nue-consulting.com/）</li>
+          <li>プライバシーポリシー（https://www.nue-consulting.com/privacy/）</li>
+          <li>ウェブアクセシビリティ方針（https://www.nue-consulting.com/accessibility/）</li>
+          <li>お問い合わせのお礼（https://www.nue-consulting.com/thanks/）</li>
+          <li>お探しのページが見つかりません（存在しない URL のときに出るページ）</li>
+        </ul>
+      </li>
       <li>依存したウェブコンテンツ技術：HTML、CSS、JavaScript、WAI-ARIA、SVG</li>
       <li>試験の方法：自動の点検ツール、HTML の文法の点検、6つの画面の幅（320〜1920px）での表示、キーボードだけでの操作、文字と背景のコントラストの測定、文字の間隔を広げた表示などで、達成基準ごとに確かめました。</li>
     </ul>
@@ -132,7 +144,7 @@
 </div>
 <div class="table-scroll" tabindex="0" role="region" aria-labelledby="checklist-wcag22">
 <table class="data-table">
-<caption id="checklist-wcag22">WCAG 2.2 で加わった達成基準（レベルA及びAA）</caption>
+<caption id="checklist-wcag22">WCAG 2.1 及び 2.2 で加わった達成基準（レベルA及びAA）</caption>
 <thead><tr><th scope="col">達成基準</th><th scope="col">レベル</th><th scope="col">適用</th><th scope="col">結果</th><th scope="col">注記</th></tr></thead>
 <tbody>
 <tr><th scope="row">1.3.4 向き (orientation)</th><td>AA</td><td>○</td><td>○</td><td>縦横どちらの向きでも使える</td></tr>
@@ -152,7 +164,7 @@
 <tr><th scope="row">3.2.6 一貫したヘルプ</th><td>A</td><td>○</td><td>○</td><td>「無料で相談する」が全ページで同じ場所にある</td></tr>
 <tr><th scope="row">3.3.7 冗長な入力項目</th><td>A</td><td>－</td><td>○</td><td>該当するコンテンツなし</td></tr>
 <tr><th scope="row">3.3.8 アクセシブルな認証 (最低限)</th><td>AA</td><td>－</td><td>○</td><td>ログインなどの認証は無い</td></tr>
-<tr><th scope="row">4.1.3 ステータスメッセージ</th><td>AA</td><td>－</td><td>○</td><td>状態の知らせ（ステータスメッセージ）は無い。入力の誤りは、その欄にフォーカスを移して知らせる</td></tr>
+<tr><th scope="row">4.1.3 ステータスメッセージ</th><td>AA</td><td>○</td><td>○</td><td>入力の途中で誤りの文が替わったときは、見えない知らせの場所（role="status"）で読み上げる。送るときの誤りは、その欄にフォーカスを移して知らせる</td></tr>
 </tbody>
 </table>
 </div>

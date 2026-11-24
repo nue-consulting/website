@@ -1,4 +1,4 @@
-# うちのWeb係 Webサイト（【要確認：本番URL】）
+# うちのWeb係 Webサイト（https://www.nue-consulting.com/）
 
 ホームページの作成と更新を引き受けるサービス「うちのWeb係」（運営：鵺（NUE）｜中小企業のAI活用支援。個人事業）の、紹介と相談の受け付けのためのサイト。
 ビルド不要の素の HTML / CSS / JavaScript で新しく作ったもの。GitHub Pages（main ブランチのルート）で公開する。

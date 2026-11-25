@@ -1463,8 +1463,9 @@ html:not(.js) .slideshow__dots {
   resize: vertical;
 }
 
-/* 入力したあとで決まりに合わない欄（必須が空・メールアドレスの形でない など）に印を付ける。枠の太さは変えない */
-.form-field :is(input, textarea, select):user-invalid {
+/* 入力したあとで決まりに合わない欄（必須が空・メールアドレスの形でない など）に印を付ける。枠の太さは変えない
+   aria-invalid は main.js が送るときに付ける（欄の下の文 .form-error と一緒に） */
+.form-field :is(input, textarea, select):is(:user-invalid, [aria-invalid="true"]) {
   border-color: var(--c-error);
   box-shadow: inset 0 0 0 1px var(--c-error);
 }
@@ -1485,9 +1486,24 @@ html:not(.js) .slideshow__dots {
   accent-color: var(--c-primary);
 }
 
-.form-check input:user-invalid {
+.form-check input:is(:user-invalid, [aria-invalid="true"]) {
   outline: 2px solid var(--c-error);
   outline-offset: 2px;
+}
+
+/* 誤りの印の枠より、フォーカスの枠を優先する（誤りのあるチェック欄にキーボードで移っても、移ったことが見えるように。JIS X 8341-3 の 2.4.7） */
+.form-check input:is(:user-invalid, [aria-invalid="true"]):focus-visible {
+  outline: 3px solid var(--c-focus);
+  outline-offset: 2px;
+}
+
+/* 入力の誤りの文（main.js が欄の下に出す。色だけに頼らず、文で知らせる） */
+.form-error {
+  margin: 6px 0 0;
+  color: var(--c-error);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.6;
 }
 
 /* <button> をリンクのボタン（a.button）と同じ形に（行の高さは .button のまま） */

@@ -23,12 +23,14 @@
   "no_current": [
     "privacy/",
     "accessibility/",
+    "tokushoho/",
     "404.html",
     "thanks/"
   ],
   "sitemap_xml_exclude": [
     "privacy/",
-    "thanks/"
+    "thanks/",
+    "tokushoho/"
   ],
   "shared_blocks": [
     "header",

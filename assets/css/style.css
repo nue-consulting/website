@@ -2777,6 +2777,15 @@ h3,
   padding: 0 20px 18px;
 }
 
+/* 表の中身に段落が複数あるとき（特定商取引法に基づく表記）、行の上下の余白を揃える */
+.spec dd > p:first-child {
+  margin-top: 0;
+}
+
+.spec dd > p:last-child {
+  margin-bottom: 0;
+}
+
 /* 運営者の表：カード */
 .spec {
   max-width: 820px;
